@@ -1,0 +1,32 @@
+﻿@model List<BookShelf.Data.Entities.Book>
+@{
+    ViewBag.Title = "Книги";
+}
+
+<style>
+    table, td, th{
+        border: 1px solid red;
+    }
+    td, th {
+        margin: 5px;
+        padding: 5px;
+    }
+</style>
+
+<table>
+    <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Publisher</th>
+        <th>Publish Date</th>
+    </tr>
+    @foreach(var book in Model)
+    {
+        <tr>
+            <td>@book.Title</td>
+            <td>@book.Author</td>
+            <td>@book.Publisher</td>
+            <td>@book.PublishDate</td>
+        </tr>
+     }
+</table>
