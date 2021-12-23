@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using BookShelf.Data.Queries;
+using BookShelf.Data.Entities;
 
 namespace BookShelf.WEB.Controllers
 {
@@ -17,18 +18,19 @@ namespace BookShelf.WEB.Controllers
             return View(books);
         }
 
-        public ActionResult About()
+        public void Insert(Book book)
         {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
+            bookRepository.Insert(book);
         }
 
-        public ActionResult Contact()
+        public void Update(Book book)
         {
-            ViewBag.Message = "Your contact page.";
 
-            return View();
+        }
+
+        public void Delete(int id)
+        {
+
         }
     }
 }

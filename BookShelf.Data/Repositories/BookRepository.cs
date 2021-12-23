@@ -37,5 +37,19 @@ namespace BookShelf.Data.Repositories
                 return books;
             }
         }
+
+        public void Insert(Book book)
+        {
+            if (book == null) throw new ArgumentNullException(nameof(book));
+
+            using (var connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+
+                connection.Execute("INSERT INTO Books VALUES (@Title, @Author, @Publisher, @PublishDate, @IsAbsent, @BeginDate, null)", book);
+
+                connection.Close();
+            }
+        }
     }
 }
