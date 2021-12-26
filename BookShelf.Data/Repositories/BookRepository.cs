@@ -13,7 +13,7 @@ namespace BookShelf.Data.Repositories
 {
     public class BookRepository
     {
-        private string ConnectionString { get; } = ConfigurationManager.ConnectionStrings["BookShelfConnection"].ConnectionString;
+        private string connectionString { get; } = ConfigurationManager.ConnectionStrings["BookShelfConnection"].ConnectionString;
 
         public List<Book> List(BookQuery query)
         {
@@ -26,27 +26,73 @@ namespace BookShelf.Data.Repositories
             if (query.OrderBy != null) orderBy = "ORDER BY @OrderBy ";
             if (query.SortDirection != null) orderBy += "@SortDirection";
 
-            using (var connection = new SqlConnection(ConnectionString))
+            List<Book> books = null;
+
+            using (var connection = new SqlConnection(connectionString))
             {
                 connection.Open();
 
-                var books = connection.Query<Book>($@"SELECT * FROM Books {conditions} {orderBy} OFFSET @Offset ROWS FETCH NEXT @Limit ROWS ONLY", query).ToList();
+                books = connection.Query<Book>($@"SELECT * FROM Books {conditions} {orderBy} OFFSET @Offset ROWS FETCH NEXT @Limit ROWS ONLY", query).ToList();
+
+                connection.Close();    
+            }
+
+            return books;
+        }
+
+        public Book Get(int id)
+        {
+            //if (id == null) throw new ArgumentNullException(nameof(id));
+
+            Book book;
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                book = connection.Query<Book>("SELECT * FROM Books WHERE ID = @id", new { id }).FirstOrDefault();
 
                 connection.Close();
-
-                return books;
             }
+
+            return book;
         }
 
         public void Insert(Book book)
         {
             if (book == null) throw new ArgumentNullException(nameof(book));
 
-            using (var connection = new SqlConnection(ConnectionString))
+            using (var connection = new SqlConnection(connectionString))
             {
                 connection.Open();
 
                 connection.Execute("INSERT INTO Books VALUES (@Title, @Author, @Publisher, @PublishDate, @IsAbsent, @BeginDate, null)", book);
+
+                connection.Close();
+            }
+        }
+
+        public void Update(Book book)
+        {
+            if (book == null) throw new ArgumentNullException(nameof(book));
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                connection.Execute("UPDATE Books SET Title = @Title, Author = @Author, Publisher = @Publisher, PublishDate = @PublishDate, IsAbsent = @IsAbsent, BeginDate = @BeginDate, DeleteDate = @DeleteDate WHERE ID = @ID", book);
+
+                connection.Close();
+            }
+        }
+
+        public void Delete(int id)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                connection.Execute("Delete FROM Books WHERE ID = @ID", new { id });
 
                 connection.Close();
             }

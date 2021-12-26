@@ -25,12 +25,12 @@ namespace BookShelf.WEB.Controllers
 
         public void Update(Book book)
         {
-
+            bookRepository.Update(book);
         }
 
         public void Delete(int id)
         {
-
+            bookRepository.Delete(id);
         }
     }
 }
